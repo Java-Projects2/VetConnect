@@ -1,7 +1,10 @@
 package com.example.vetconnect.users.services;
 
+import com.example.vetconnect.Utils.Utils;
 import com.example.vetconnect.authentication.JWT.JwtService;
 import com.example.vetconnect.authentication.JWT.JwtUserPrincipal;
+import com.example.vetconnect.clinics.Repository.ClinicRepository;
+import com.example.vetconnect.clinics.enitity.Clinic;
 import com.example.vetconnect.users.Repository.UserRepository;
 import com.example.vetconnect.users.dto.CreateUserRequest;
 import com.example.vetconnect.users.dto.UpdateUserRequest;
@@ -21,7 +24,9 @@ import java.util.stream.Collectors;
 public class UserServiceImplement implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final ClinicRepository clinicRepository;
     private final JwtService jwtService;
+    private final Utils utils;
 
 
     @Override
@@ -31,7 +36,8 @@ public class UserServiceImplement implements UserService {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole()
+                user.getRole(),
+                user.getClinic()
         )).collect(Collectors.toList());
     }
 
@@ -39,7 +45,7 @@ public class UserServiceImplement implements UserService {
     public String createUser(CreateUserRequest request) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already exists");
         }
         User user = new User(
                 request.getName(),
@@ -59,13 +65,13 @@ public class UserServiceImplement implements UserService {
         System.out.println(userDataFromToken.getUserName());
         System.out.println(userDataFromToken.getEmail());
         System.out.println(userDataFromToken.getRole());
-        if (!jwtService.isUserAdminOrOwner(id)){
+        if (!jwtService.isUserAdminOrOwner(id)) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
                     "You are not allowed to update this user"
             );
         }
-         if (request.getName() != null && !request.getName().isEmpty()) {
+      /*   if (request.getName() != null && !request.getName().isEmpty()) {
             user.setName(request.getName());
         }
         if (request.getEmail() != null && !request.getEmail().isEmpty()) {
@@ -73,19 +79,31 @@ public class UserServiceImplement implements UserService {
         }
         if (!(request.getRole() == null)) {
             user.setRole(request.getRole());
+        }*/
+        utils.updateIfPresent(request.getName(), user::setName);
+        utils.updateIfPresent(request.getEmail(), user::setEmail);
+        if (userDataFromToken.getRole().name().equals("admin")) {
+            utils.updateIfPresent(request.getRole(), user::setRole);
+            if (request.getClinic_id() != null) {
+               Clinic clinic = clinicRepository.findById(request.getClinic_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic not found"));
+               user.setClinic(clinic);
+            }
         }
+
+
         return new UserResponse(
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                user.getRole()
+                user.getRole(),
+                user.getClinic()
         );
     }
 
     @Override
     public String deleteUser(Long id) {
         System.out.println(id);
-        if (!jwtService.isUserAdminOrOwner(id)){
+        if (!jwtService.isUserAdminOrOwner(id)) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
                     "You are not allowed to delete this user"
