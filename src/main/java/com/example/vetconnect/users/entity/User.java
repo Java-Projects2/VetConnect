@@ -1,5 +1,6 @@
 package com.example.vetconnect.users.entity;
 
+import com.example.vetconnect.clinics.enitity.Clinic;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
@@ -38,6 +39,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.user; // ✅ DEFAULT HERE
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clinic_id", nullable = true)
+    private Clinic clinic;
 
     @CreationTimestamp
     @Column(name = "created_at")

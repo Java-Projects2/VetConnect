@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -41,10 +42,8 @@ public class Clinic {
     @Column(name = "phone", nullable = false, length = 11)
     private String phone;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "vet_id", nullable = false)
-    private User vet;
+    @OneToMany(mappedBy = "clinic")
+    private Set<User> vets = new LinkedHashSet<>();
 
     @CreatedDate
     @Column(name = "createdAt")
@@ -56,5 +55,6 @@ public class Clinic {
 
     @OneToMany(mappedBy = "clinic")
     private Set<Appointment> appointments = new LinkedHashSet<>();
+
 
 }

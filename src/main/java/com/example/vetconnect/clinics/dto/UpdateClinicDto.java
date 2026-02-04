@@ -8,8 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateClinicDto {
-    @NotNull
-    private Long id;
 
     @Size(max = 255)
     private String name;

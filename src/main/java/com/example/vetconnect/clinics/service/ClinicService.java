@@ -9,10 +9,10 @@ import org.springframework.data.domain.Pageable;
 
 
 public interface ClinicService {
-    public Clinic createClinic(CreateClinicDto dto);
+    public Clinic createClinic(CreateClinicDto request);
 
-    public Page<ResponseClinicDto> getAll(Pageable pageable);
+/*    public Page<ResponseClinicDto> getAll(Pageable pageable);
 
-    public Clinic updateClinic(UpdateClinicDto dto,Long id);
+    public Clinic updateClinic(UpdateClinicDto dto,Long id);*/
 
 }

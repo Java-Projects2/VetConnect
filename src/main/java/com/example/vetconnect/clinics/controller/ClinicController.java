@@ -28,16 +28,12 @@ public class ClinicController {
     }
 
     @PostMapping
-    public String createClinic(@ModelAttribute("clinicDto") CreateClinicDto dto, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "clinics";
-        }
-        Clinic clinic = clinicService.createClinic(dto);
-        model.addAttribute("clinic", clinic);
-        return "clinics/success";
+    public String createClinic(@RequestBody CreateClinicDto request) {
+        Clinic clinic = clinicService.createClinic(request);
+        return "clinic created successfully";
     }
 
-    @GetMapping
+    /*@GetMapping
     public String getAll(@RequestParam(defaultValue = "0") int page,
                          @RequestParam(defaultValue = "10") int size, Model model) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
@@ -55,6 +51,6 @@ public class ClinicController {
         Clinic updateClinic = clinicService.updateClinic(dto, id);
         model.addAttribute("clinic", updateClinic);
         return "clinics/success";
-    }
+    }*/
 
 }
