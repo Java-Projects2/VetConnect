@@ -12,7 +12,7 @@ public class CreateClinicDto {
     private String name;
     private String address;
     private String phone;
-    private com.example.vetconnect.users.entity.User vetId;
+    private User vetId;
     private Instant createdAt;
     private Instant updatedAt;
 }

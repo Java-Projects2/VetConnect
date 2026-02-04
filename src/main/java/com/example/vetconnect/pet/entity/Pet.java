@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.LinkedHashSet;
@@ -15,6 +16,7 @@ import java.util.Set;
 @Setter
 @Entity
 @Table(name = "pet", schema = "vetmvc")
+@NoArgsConstructor
 public class Pet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +25,7 @@ public class Pet {
 
     @NotNull
     @Column(name = "name", nullable = false)
-    private Long name;
+    private String name;
 
     @Size(max = 255)
     @NotNull
@@ -47,4 +49,11 @@ public class Pet {
     @OneToMany(mappedBy = "pet")
     private Set<Appointment> appointments = new LinkedHashSet<>();
 
+    public Pet(String name, String type, String breed, Integer age, User user) {
+        this.name = name;
+        this.type = type;
+        this.breed = breed;
+        this.age = age;
+        this.user = user;
+    }
 }

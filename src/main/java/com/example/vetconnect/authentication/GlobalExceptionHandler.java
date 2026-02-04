@@ -6,6 +6,7 @@ import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.naming.AuthenticationException;
 import java.nio.file.AccessDeniedException;
@@ -39,6 +40,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ErrorResponseException.class)
     public ResponseEntity<String> handleRuntime(ErrorResponseException ex) {
+        return ResponseEntity
+                .status(ex.getStatusCode())
+                .body(ex.getMessage());
+    }
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<String> handleRuntime(ResponseStatusException ex) {
         return ResponseEntity
                 .status(ex.getStatusCode())
                 .body(ex.getMessage());

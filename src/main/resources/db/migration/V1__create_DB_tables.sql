@@ -30,7 +30,7 @@ create table pet
 (
     id      bigint auto_increment
         primary key,
-    name    bigint       not null,
+    name    varchar(255) not null,
     type    varchar(255) not null,
     breed   varchar(255) not null,
     age     int          not null,
