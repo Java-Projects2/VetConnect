@@ -2,6 +2,7 @@ package com.example.vetconnect.authentication;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -33,6 +34,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleRuntime(RuntimeException ex) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)  // 400
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(ErrorResponseException.class)
+    public ResponseEntity<String> handleRuntime(ErrorResponseException ex) {
+        return ResponseEntity
+                .status(ex.getStatusCode())
                 .body(ex.getMessage());
     }
  /*   @ExceptionHandler(MethodArgumentNotValidException.class)

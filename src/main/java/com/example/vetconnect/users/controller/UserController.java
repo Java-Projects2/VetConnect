@@ -1,5 +1,6 @@
 package com.example.vetconnect.users.controller;
 
+import com.example.vetconnect.authentication.JWT.JwtService;
 import com.example.vetconnect.users.dto.UpdateUserRequest;
 import com.example.vetconnect.users.dto.UserResponse;
 import com.example.vetconnect.users.services.UserService;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -15,10 +17,12 @@ import java.util.List;
 @RequestMapping("/api/user")
 public class UserController {
 
+    private final JwtService jwtService;
     UserService userService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, JwtService jwtService) {
         this.userService = userService;
+        this.jwtService = jwtService;
     }
     @GetMapping("/debug-token")
     public ResponseEntity<String> debugToken(HttpServletRequest request) {

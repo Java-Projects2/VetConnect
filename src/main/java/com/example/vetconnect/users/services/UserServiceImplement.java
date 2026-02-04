@@ -60,7 +60,10 @@ public class UserServiceImplement implements UserService {
         System.out.println(userDataFromToken.getEmail());
         System.out.println(userDataFromToken.getRole());
         if (!jwtService.isUserAdminOrOwner(id)){
-            throw new RuntimeException("You are not allowed to update this user");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You are not allowed to update this user"
+            );
         }
          if (request.getName() != null && !request.getName().isEmpty()) {
             user.setName(request.getName());
@@ -83,7 +86,10 @@ public class UserServiceImplement implements UserService {
     public String deleteUser(Long id) {
         System.out.println(id);
         if (!jwtService.isUserAdminOrOwner(id)){
-            throw new RuntimeException("You are not allowed to update this user");
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You are not allowed to delete this user"
+            );
         }
         if (!userRepository.existsById(id)) {
             return "User Doesnt exist";
