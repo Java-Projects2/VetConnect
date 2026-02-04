@@ -83,14 +83,17 @@ public class UserServiceImplement implements UserService {
         utils.updateIfPresent(request.getName(), user::setName);
         utils.updateIfPresent(request.getEmail(), user::setEmail);
         if (userDataFromToken.getRole().name().equals("admin")) {
-            utils.updateIfPresent(request.getRole(), user::setRole);
-            if (request.getClinic_id() != null) {
-               Clinic clinic = clinicRepository.findById(request.getClinic_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic not found"));
-               user.setClinic(clinic);
+            /*utils.updateIfPresent(request.getRole(), user::setRole);*/
+            if (request.getRole() != null) {
+                System.out.println(request.getRole());
+            }
+            if (request.getClinic_id() != null && (user.getRole().name().equals("vet") || request.getRole().name().equals("vet"))) {
+                Clinic clinic = clinicRepository.findById(request.getClinic_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic not found"));
+                user.setClinic(clinic);
             }
         }
 
-
+        userRepository.save(user);
         return new UserResponse(
                 user.getId(),
                 user.getName(),

@@ -45,16 +45,16 @@ public class Clinic {
     @OneToMany(mappedBy = "clinic")
     private Set<User> vets = new LinkedHashSet<>();
 
-    @CreatedDate
-    @Column(name = "createdAt")
-    private Instant createdAt;
 
-    @LastModifiedDate
-    @Column(name = "updatedAt")
-    private Instant updatedAt;
 
     @OneToMany(mappedBy = "clinic")
     private Set<Appointment> appointments = new LinkedHashSet<>();
 
+
+    @Column(name = "created_at")
+    private Instant createdAt;
+
+    @Column(name = "updated_at")
+    private Instant updatedAt;
 
 }
