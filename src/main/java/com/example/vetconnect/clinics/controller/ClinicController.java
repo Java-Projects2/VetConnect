@@ -2,6 +2,7 @@ package com.example.vetconnect.clinics.controller;
 
 import com.example.vetconnect.clinics.dto.ClinicResponseDTO;
 import com.example.vetconnect.clinics.dto.CreateClinicDto;
+import com.example.vetconnect.clinics.dto.UpdateClinicDto;
 import com.example.vetconnect.clinics.enitity.Clinic;
 import com.example.vetconnect.clinics.service.ClinicService;
 import com.example.vetconnect.users.Repository.UserRepository;
@@ -41,22 +42,18 @@ public class ClinicController {
         Page<ClinicResponseDTO> clinics = clinicService.getAllClinics(pageable);
         return ResponseEntity.ok(clinics);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<ClinicResponseDTO> getSingleClinic(@PathVariable("id") Long id) {
         ClinicResponseDTO clinic = clinicService.getSingleClinic(id);
         return ResponseEntity.ok(clinic);
     }
 
-
- /*   @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePet(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(petService.deletePet(id), HttpStatus.OK);
-    }
-
     @PatchMapping("/{id}")
-    public ResponseEntity<String> updatePet(@PathVariable("id") Long id, @Valid @RequestBody UpdatePetRequestDTO request) {
-        return new ResponseEntity<>(petService.updatePet(id, request), HttpStatus.OK);
-    }*/
+    public ResponseEntity<String> updateBasicInfoClinic(@RequestBody UpdateClinicDto request, @PathVariable("id") Long id) {
+        clinicService.updateClinic(request, id);
+        return ResponseEntity.ok("clinic updated successfully");
+    }
 
 
 }

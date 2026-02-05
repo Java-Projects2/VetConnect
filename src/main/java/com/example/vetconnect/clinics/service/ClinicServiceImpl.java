@@ -5,6 +5,7 @@ import com.example.vetconnect.authentication.JWT.JwtUserPrincipal;
 import com.example.vetconnect.clinics.Repository.ClinicRepository;
 import com.example.vetconnect.clinics.dto.ClinicResponseDTO;
 import com.example.vetconnect.clinics.dto.CreateClinicDto;
+import com.example.vetconnect.clinics.dto.UpdateClinicDto;
 import com.example.vetconnect.clinics.dto.VetDto;
 import com.example.vetconnect.clinics.enitity.Clinic;
 import com.example.vetconnect.users.Repository.UserRepository;
@@ -90,7 +91,7 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     public ClinicResponseDTO getSingleClinic(Long id) {
-        Clinic clinic = clinicRepository.findById(id).orElseThrow(()-> new RuntimeException("clinic not found"));
+        Clinic clinic = clinicRepository.findById(id).orElseThrow(() -> new RuntimeException("clinic not found"));
         ClinicResponseDTO dto = new ClinicResponseDTO();
         dto.setId(clinic.getId());
         dto.setName(clinic.getName());
@@ -101,29 +102,25 @@ public class ClinicServiceImpl implements ClinicService {
         dto.setUpdatedAt(clinic.getUpdatedAt());
         return dto;
     }
-/*
-    public Clinic updateClinic(UpdateClinicDto dto, Long id) {
-        Boolean isAdmin = jwtService.isUserAdminOrOwner(dto.getVetId());
 
-        if (!isAdmin) {
-            throw new RuntimeException("not authorized");
+    public void updateClinic(UpdateClinicDto request, Long id) {
+        Clinic clinic = clinicRepository.findById(id).orElseThrow(() -> new RuntimeException("clinic not found"));
+        if (request.getName() != null) {
+            if (clinicRepository.existsByName(request.getName())) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Clinic name already exists"
+                );
+            }
+            clinic.setName(request.getName());
         }
-
-        Clinic clinic = clinicRepository.findById(id).orElseThrow(() ->
-                new RuntimeException("clinic not found")
-        );
-        if (dto.getName() != null) {
-            clinic.setName(dto.getName());
+        if (request.getAddress() != null) {
+            clinic.setAddress(request.getAddress());
         }
-        if (dto.getAddress() != null) clinic.setAddress(dto.getAddress());
-        if (dto.getPhone() != null) clinic.setPhone(dto.getPhone());
-        if (dto.getVetId() != null) {
-            clinic.setVet(userRepository.findById(dto.getVetId()).orElseThrow(() ->
-                    new RuntimeException("vet not found")
-            ));
-
+        if (request.getPhone() != null) {
+            clinic.setPhone(request.getPhone());
         }
-        return clinic;
-    }*/
+        clinicRepository.save(clinic);
+    }
 
 }

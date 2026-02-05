@@ -50,8 +50,6 @@ public class Clinic {
     @OneToMany(mappedBy = "clinic")
     private Set<User> vets = new LinkedHashSet<>();
 
-
-
     @OneToMany(mappedBy = "clinic")
     private Set<Appointment> appointments = new LinkedHashSet<>();
 

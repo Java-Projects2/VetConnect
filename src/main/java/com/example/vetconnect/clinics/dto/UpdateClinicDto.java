@@ -8,7 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UpdateClinicDto {
-
     @Size(max = 255)
     private String name;
 
@@ -17,7 +16,4 @@ public class UpdateClinicDto {
 
     @Size(max = 11)
     private String phone;
-
-    private Long vetId;
-
 }
