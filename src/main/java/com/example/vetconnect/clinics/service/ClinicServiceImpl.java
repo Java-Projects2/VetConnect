@@ -108,12 +108,7 @@ public class ClinicServiceImpl implements ClinicService {
         Clinic clinic = clinicRepository.findById(id).orElseThrow(() -> new RuntimeException("clinic not found"));
 
         if (request.getName() != null) {
-            if (clinicRepository.existsByName(request.getName())) {
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Clinic name already exists"
-                );
-            }
+
             clinic.setName(request.getName());
         }
         if (request.getAddress() != null) {
@@ -122,7 +117,14 @@ public class ClinicServiceImpl implements ClinicService {
         if (request.getPhone() != null) {
             clinic.setPhone(request.getPhone());
         }
-        clinicRepository.save(clinic);
+
+        try {
+            clinicRepository.save(clinic);
+        } catch (Exception e) {
+            if (e.getMessage().contains("Duplicate entry")) {
+                throw new RuntimeException("Clinic " + request.getName() + " already exists");
+            }
+        }
     }
 
     public void addVetsToClinic(Long id, UpdateVetsDto request) {
