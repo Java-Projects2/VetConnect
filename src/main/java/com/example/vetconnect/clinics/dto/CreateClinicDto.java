@@ -32,7 +32,7 @@ public class CreateClinicDto implements Serializable {
     @NotNull
     @Size(max = 11)
     String phone;
-    @NotEmpty(message = "Clinic must have at least one vet")
-    private Set<Long> vets;
+
+    private List<Long> vetIds;
 
 }

@@ -4,6 +4,7 @@ import com.example.vetconnect.Utils.Utils;
 import com.example.vetconnect.authentication.JWT.JwtService;
 import com.example.vetconnect.authentication.JWT.JwtUserPrincipal;
 import com.example.vetconnect.clinics.Repository.ClinicRepository;
+import com.example.vetconnect.clinics.dto.ClinicSummaryDTO;
 import com.example.vetconnect.clinics.enitity.Clinic;
 import com.example.vetconnect.users.Repository.UserRepository;
 import com.example.vetconnect.users.dto.CreateUserRequest;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -32,14 +32,28 @@ public class UserServiceImplement implements UserService {
     @Override
     public List<UserResponse> getAllUsers() {
         List<User> users = this.userRepository.findAll();
-        return users.stream().map(user -> new UserResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole(),
-                user.getClinic()
-        )).collect(Collectors.toList());
-    }
+        return users.stream().map(user -> {
+            Clinic clinic = user.getClinic();
+            ClinicSummaryDTO clinicResponse = clinic == null ? null
+                    : new ClinicSummaryDTO(
+                    clinic.getId(),
+                    clinic.getName(),
+                    clinic.getAddress(),
+                    clinic.getPhone(),
+                    clinic.getCreatedAt(),
+                    clinic.getUpdatedAt()
+            );
+                    return new UserResponse(
+                            user.getId(),
+                            user.getName(),
+                            user.getEmail(),
+                            user.getRole(),
+                            clinicResponse, // ✅ safe
+                            user.getCreatedAt()
+                    );
+                })
+                .toList();
+        }
 
     @Override
     public String createUser(CreateUserRequest request) {
@@ -58,13 +72,13 @@ public class UserServiceImplement implements UserService {
 
     @Override
     public UserResponse updateUser(Long id, UpdateUserRequest request) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         /* System.out.println(jwtService.getUserDataFromToken().getId());*/
         JwtUserPrincipal userDataFromToken = jwtService.getUserDataFromToken();
-        System.out.println(userDataFromToken.getId());
+        /*System.out.println(userDataFromToken.getId());
         System.out.println(userDataFromToken.getUserName());
         System.out.println(userDataFromToken.getEmail());
-        System.out.println(userDataFromToken.getRole());
+        System.out.println(userDataFromToken.getRole());*/
         if (!jwtService.isUserAdminOrOwner(id)) {
             throw new ResponseStatusException(
                     HttpStatus.FORBIDDEN,
@@ -86,6 +100,7 @@ public class UserServiceImplement implements UserService {
             /*utils.updateIfPresent(request.getRole(), user::setRole);*/
             if (request.getRole() != null) {
                 System.out.println(request.getRole());
+                user.setRole(request.getRole());
             }
             if (request.getClinic_id() != null && (user.getRole().name().equals("vet") || request.getRole().name().equals("vet"))) {
                 Clinic clinic = clinicRepository.findById(request.getClinic_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic not found"));
@@ -99,7 +114,15 @@ public class UserServiceImplement implements UserService {
                 user.getName(),
                 user.getEmail(),
                 user.getRole(),
-                user.getClinic()
+                new ClinicSummaryDTO(
+                        user.getClinic().getId(),
+                        user.getClinic().getName(),
+                        user.getClinic().getAddress(),
+                        user.getClinic().getPhone(),
+                        user.getClinic().getCreatedAt(),
+                        user.getClinic().getUpdatedAt()
+                ),
+                user.getCreatedAt()
         );
     }
 

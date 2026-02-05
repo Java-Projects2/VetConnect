@@ -4,53 +4,61 @@ import com.example.vetconnect.authentication.JWT.JwtService;
 import com.example.vetconnect.authentication.JWT.JwtUserPrincipal;
 import com.example.vetconnect.clinics.Repository.ClinicRepository;
 import com.example.vetconnect.clinics.dto.CreateClinicDto;
-import com.example.vetconnect.clinics.dto.ResponseClinicDto;
-import com.example.vetconnect.clinics.dto.UpdateClinicDto;
 import com.example.vetconnect.clinics.enitity.Clinic;
 import com.example.vetconnect.users.Repository.UserRepository;
 import com.example.vetconnect.users.entity.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ClinicServiceImpl implements ClinicService {
     private final ClinicRepository clinicRepository;
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
-    public ClinicServiceImpl(ClinicRepository clinicRepository, JwtService jwtService, UserRepository userRepository) {
-        this.clinicRepository = clinicRepository;
-        this.jwtService = jwtService;
-        this.userRepository = userRepository;
-    }
-
     public Clinic createClinic(CreateClinicDto dto) {
         JwtUserPrincipal userDataFromToken = jwtService.getUserDataFromToken();
         if (!userDataFromToken.getRole().name().equals("admin")) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "admin only create clinic");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Admins can create clinics");
         }
-        Set<User> vetEntities = dto.getVets().stream().map(id -> {
-            User vet = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vet not found"));
-            if (!vet.getRole().name().equals("vet")) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "this user is not vet");
+        Clinic clinic = new Clinic(
+                dto.getName(),
+                dto.getAddress(),
+                dto.getAddress()
+        );
+
+        Clinic savedClinic = clinicRepository.save(clinic);
+        if (dto.getVetIds() != null && !dto.getVetIds().isEmpty()) {
+
+            List<User> users = userRepository.findAllById(dto.getVetIds());
+
+            if (users.size() != dto.getVetIds().size()) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "One or more users not found"
+                );
             }
-            return vet;
-        }).collect(Collectors.toSet());
+            // make sure that each user is a vet
+            for (User user : users) {
+                if (user.getRole() != User.Role.vet) {
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "User with id " + user.getId() + " is not a vet"
+                    );
+                }
+            }
 
-        Clinic clinic = new Clinic();
-        clinic.setName(dto.getName());
-        clinic.setAddress(dto.getAddress());
-        clinic.setPhone(dto.getPhone());
-        clinic.setVets(vetEntities);
+            users.forEach(user -> user.setClinic(savedClinic));
 
-        return clinicRepository.save(clinic);
+            userRepository.saveAll(users);
+        }
+
+        return savedClinic;
     }
 
  /*   public Page<ResponseClinicDto> getAll(Pageable pageable) {
