@@ -53,7 +53,6 @@ public class Clinic {
     @OneToMany(mappedBy = "clinic")
     private Set<Appointment> appointments = new LinkedHashSet<>();
 
-
     @CreationTimestamp
     @Column(name = "created_at")
     private Instant createdAt;

@@ -3,23 +3,20 @@ package com.example.vetconnect.clinics.service;
 import com.example.vetconnect.authentication.JWT.JwtService;
 import com.example.vetconnect.authentication.JWT.JwtUserPrincipal;
 import com.example.vetconnect.clinics.Repository.ClinicRepository;
-import com.example.vetconnect.clinics.dto.ClinicResponseDTO;
-import com.example.vetconnect.clinics.dto.CreateClinicDto;
-import com.example.vetconnect.clinics.dto.UpdateClinicDto;
-import com.example.vetconnect.clinics.dto.VetDto;
+import com.example.vetconnect.clinics.dto.*;
 import com.example.vetconnect.clinics.enitity.Clinic;
 import com.example.vetconnect.users.Repository.UserRepository;
 import com.example.vetconnect.users.entity.User;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.web.server.ui.OneTimeTokenSubmitPageGeneratingWebFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -104,7 +101,12 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     public void updateClinic(UpdateClinicDto request, Long id) {
+        JwtUserPrincipal userDataFromToken = jwtService.getUserDataFromToken();
+        if (!userDataFromToken.getRole().name().equals("admin")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Admins can update clinics");
+        }
         Clinic clinic = clinicRepository.findById(id).orElseThrow(() -> new RuntimeException("clinic not found"));
+
         if (request.getName() != null) {
             if (clinicRepository.existsByName(request.getName())) {
                 throw new ResponseStatusException(
@@ -121,6 +123,75 @@ public class ClinicServiceImpl implements ClinicService {
             clinic.setPhone(request.getPhone());
         }
         clinicRepository.save(clinic);
+    }
+
+    public void addVetsToClinic(Long id, UpdateVetsDto request) {
+        JwtUserPrincipal userDataFromToken = jwtService.getUserDataFromToken();
+        if (!userDataFromToken.getRole().name().equals("admin")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Admins can update clinics");
+        }
+        Clinic clinic = clinicRepository.findById(id).orElseThrow(() -> new RuntimeException("clinic not found"));
+        List<User> vetsToAdd = userRepository.findAllById(request.getVets());
+        Set<Long> foundIds = vetsToAdd.stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
+        List<Long> notFoundIds = request.getVets().stream()
+                .filter(vetId -> !foundIds.contains(vetId))
+                .toList();
+
+        if (!notFoundIds.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "The following vet IDs were not found: " + notFoundIds
+            );
+        }
+        vetsToAdd.forEach(vet -> {
+            if (!vet.getRole().name().equals("vet")) {
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
+                        "User with ID " + vet.getId() + " is not a vet"
+                );
+            }
+        });
+        vetsToAdd.forEach(vet -> vet.setClinic(clinic));
+        userRepository.saveAll(vetsToAdd);
+    }
+
+    public void removeVetsFromClinic(Long id, UpdateVetsDto request) {
+        JwtUserPrincipal userDataFromToken = jwtService.getUserDataFromToken();
+        if (!userDataFromToken.getRole().name().equals("admin")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only Admins can update clinics");
+        }
+        Clinic clinic = clinicRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Clinic not found"));
+        List<User> vetsToRemove = userRepository.findAllById(request.getVets());
+
+        Set<Long> foundIds = vetsToRemove.stream()
+                .map(User::getId)
+                .collect(Collectors.toSet());
+        List<Long> notFoundIds = request.getVets().stream()
+                .filter(vetId -> !foundIds.contains(vetId))
+                .toList();
+        if (!notFoundIds.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "The following vet IDs were not found: " + notFoundIds
+            );
+        }
+
+        vetsToRemove.forEach(vet -> {
+            if (!vet.getRole().name().equals("vet")) {
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
+                        "User with ID " + vet.getId() + " is not a vet"
+                );
+            }
+            vet.setClinic(null);
+        });
+
+        userRepository.saveAll(vetsToRemove);
+
+
     }
 
 }

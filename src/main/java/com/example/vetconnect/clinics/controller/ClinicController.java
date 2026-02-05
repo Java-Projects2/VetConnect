@@ -1,8 +1,6 @@
 package com.example.vetconnect.clinics.controller;
 
-import com.example.vetconnect.clinics.dto.ClinicResponseDTO;
-import com.example.vetconnect.clinics.dto.CreateClinicDto;
-import com.example.vetconnect.clinics.dto.UpdateClinicDto;
+import com.example.vetconnect.clinics.dto.*;
 import com.example.vetconnect.clinics.enitity.Clinic;
 import com.example.vetconnect.clinics.service.ClinicService;
 import com.example.vetconnect.users.Repository.UserRepository;
@@ -53,6 +51,19 @@ public class ClinicController {
     public ResponseEntity<String> updateBasicInfoClinic(@RequestBody UpdateClinicDto request, @PathVariable("id") Long id) {
         clinicService.updateClinic(request, id);
         return ResponseEntity.ok("clinic updated successfully");
+    }
+
+    @PutMapping("/{id}/vets/add")
+    public ResponseEntity<String> addVetToClinic(@PathVariable("id") Long id, @RequestBody UpdateVetsDto request) {
+        clinicService.addVetsToClinic(id, request);
+        return ResponseEntity.ok("vet added successfully");
+    }
+
+    @PutMapping("/{id}/vets/remove")
+    public ResponseEntity<String> removeVetsFromClinic(@PathVariable("id") Long id, @RequestBody UpdateVetsDto request) {
+
+        clinicService.removeVetsFromClinic(id, request);
+        return ResponseEntity.ok("vet removed successfully");
     }
 
 
