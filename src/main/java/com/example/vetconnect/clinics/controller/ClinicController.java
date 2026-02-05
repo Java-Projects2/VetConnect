@@ -41,8 +41,14 @@ public class ClinicController {
         Page<ClinicResponseDTO> clinics = clinicService.getAllClinics(pageable);
         return ResponseEntity.ok(clinics);
     }
-/*
-    @DeleteMapping("/{id}")
+    @GetMapping("/{id}")
+    public ResponseEntity<ClinicResponseDTO> getSingleClinic(@PathVariable("id") Long id) {
+        ClinicResponseDTO clinic = clinicService.getSingleClinic(id);
+        return ResponseEntity.ok(clinic);
+    }
+
+
+ /*   @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePet(@PathVariable("id") Long id) {
         return new ResponseEntity<>(petService.deletePet(id), HttpStatus.OK);
     }
@@ -50,10 +56,7 @@ public class ClinicController {
     @PatchMapping("/{id}")
     public ResponseEntity<String> updatePet(@PathVariable("id") Long id, @Valid @RequestBody UpdatePetRequestDTO request) {
         return new ResponseEntity<>(petService.updatePet(id, request), HttpStatus.OK);
-    }
-    @GetMapping("/{id}")
-    public ResponseEntity<PetResponse> get(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(petService.getPetById(id), HttpStatus.OK);
     }*/
+
 
 }

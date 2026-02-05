@@ -5,12 +5,15 @@ import com.example.vetconnect.clinics.dto.CreateClinicDto;
 import com.example.vetconnect.clinics.enitity.Clinic;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 
 
 public interface ClinicService {
     public Clinic createClinic(CreateClinicDto request);
 
     public Page<ClinicResponseDTO> getAllClinics(Pageable pageable);
+
+    public ClinicResponseDTO getSingleClinic(Long id);
 
 /*
     public Clinic updateClinic(UpdateClinicDto dto,Long id);

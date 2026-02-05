@@ -83,8 +83,23 @@ public class ClinicServiceImpl implements ClinicService {
             dto.setAddress(clinic.getAddress());
             dto.setPhone(clinic.getPhone());
             dto.setVets(clinic.getVets().stream().map(vet -> new VetDto(vet.getId(), vet.getName())).collect(Collectors.toList()));
+            dto.setCreatedAt(clinic.getCreatedAt());
+            dto.setUpdatedAt(clinic.getUpdatedAt());
             return dto;
         });
+    }
+
+    public ClinicResponseDTO getSingleClinic(Long id) {
+        Clinic clinic = clinicRepository.findById(id).orElseThrow(()-> new RuntimeException("clinic not found"));
+        ClinicResponseDTO dto = new ClinicResponseDTO();
+        dto.setId(clinic.getId());
+        dto.setName(clinic.getName());
+        dto.setAddress(clinic.getAddress());
+        dto.setPhone(clinic.getPhone());
+        dto.setVets(clinic.getVets().stream().map(vet -> new VetDto(vet.getId(), vet.getName())).collect(Collectors.toList()));
+        dto.setCreatedAt(clinic.getCreatedAt());
+        dto.setUpdatedAt(clinic.getUpdatedAt());
+        return dto;
     }
 /*
     public Clinic updateClinic(UpdateClinicDto dto, Long id) {
