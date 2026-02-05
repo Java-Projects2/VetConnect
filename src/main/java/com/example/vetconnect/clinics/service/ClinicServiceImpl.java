@@ -3,16 +3,23 @@ package com.example.vetconnect.clinics.service;
 import com.example.vetconnect.authentication.JWT.JwtService;
 import com.example.vetconnect.authentication.JWT.JwtUserPrincipal;
 import com.example.vetconnect.clinics.Repository.ClinicRepository;
+import com.example.vetconnect.clinics.dto.ClinicResponseDTO;
 import com.example.vetconnect.clinics.dto.CreateClinicDto;
+import com.example.vetconnect.clinics.dto.VetDto;
 import com.example.vetconnect.clinics.enitity.Clinic;
 import com.example.vetconnect.users.Repository.UserRepository;
 import com.example.vetconnect.users.entity.User;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.web.server.ui.OneTimeTokenSubmitPageGeneratingWebFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -31,6 +38,12 @@ public class ClinicServiceImpl implements ClinicService {
                 dto.getAddress(),
                 dto.getAddress()
         );
+        if (clinicRepository.existsByName(dto.getName())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Clinic name already exists"
+            );
+        }
 
         Clinic savedClinic = clinicRepository.save(clinic);
         if (dto.getVetIds() != null && !dto.getVetIds().isEmpty()) {
@@ -61,19 +74,19 @@ public class ClinicServiceImpl implements ClinicService {
         return savedClinic;
     }
 
- /*   public Page<ResponseClinicDto> getAll(Pageable pageable) {
+    public Page<ClinicResponseDTO> getAllClinics(Pageable pageable) {
         Page<Clinic> clinics = clinicRepository.findAll(pageable);
         return clinics.map(clinic -> {
-            ResponseClinicDto dto = new ResponseClinicDto();
+            ClinicResponseDTO dto = new ClinicResponseDTO();
             dto.setId(clinic.getId());
             dto.setName(clinic.getName());
             dto.setAddress(clinic.getAddress());
             dto.setPhone(clinic.getPhone());
-            dto.setVetName(clinic.getVet().getName());
+            dto.setVets(clinic.getVets().stream().map(vet -> new VetDto(vet.getId(), vet.getName())).collect(Collectors.toList()));
             return dto;
         });
     }
-
+/*
     public Clinic updateClinic(UpdateClinicDto dto, Long id) {
         Boolean isAdmin = jwtService.isUserAdminOrOwner(dto.getVetId());
 

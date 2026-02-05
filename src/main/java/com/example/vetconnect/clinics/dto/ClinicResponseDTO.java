@@ -1,5 +1,6 @@
 package com.example.vetconnect.clinics.dto;
 
+import com.example.vetconnect.users.entity.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,7 @@ public class ClinicResponseDTO {
     private String name;
     private String address;
     private String phone;
-    private List<Long> vets;
+    private List<VetDto> vets;
     private Instant createdAt;
     private Instant updatedAt;
 }
