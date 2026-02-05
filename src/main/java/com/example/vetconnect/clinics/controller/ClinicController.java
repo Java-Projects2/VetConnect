@@ -19,7 +19,7 @@ public class ClinicController {
     private final UserRepository userRepository;
 
     @PostMapping
-    public ResponseEntity<Clinic> addPet(@Valid @RequestBody CreateClinicDto request) {
+    public ResponseEntity<Clinic> CreateClinic(@Valid @RequestBody CreateClinicDto request) {
         return new ResponseEntity<>(clinicService.createClinic(request), HttpStatus.CREATED);
     }
 /*
