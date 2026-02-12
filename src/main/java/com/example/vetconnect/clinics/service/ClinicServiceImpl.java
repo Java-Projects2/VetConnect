@@ -26,6 +26,8 @@ public class ClinicServiceImpl implements ClinicService {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
+    @Override
+    @Transactional
     public Clinic createClinic(CreateClinicDto dto) {
         JwtUserPrincipal userDataFromToken = jwtService.getUserDataFromToken();
         if (!userDataFromToken.getRole().name().equals("admin")) {
@@ -72,6 +74,8 @@ public class ClinicServiceImpl implements ClinicService {
         return savedClinic;
     }
 
+
+    @Override
     public Page<ClinicResponseDTO> getAllClinics(Pageable pageable) {
         Page<Clinic> clinics = clinicRepository.findAll(pageable);
         return clinics.map(clinic -> {
@@ -87,6 +91,8 @@ public class ClinicServiceImpl implements ClinicService {
         });
     }
 
+
+    @Override
     public ClinicResponseDTO getSingleClinic(Long id) {
         Clinic clinic = clinicRepository.findById(id).orElseThrow(() -> new RuntimeException("clinic not found"));
         ClinicResponseDTO dto = new ClinicResponseDTO();
@@ -100,6 +106,8 @@ public class ClinicServiceImpl implements ClinicService {
         return dto;
     }
 
+
+    @Override
     public void updateClinic(UpdateClinicDto request, Long id) {
         JwtUserPrincipal userDataFromToken = jwtService.getUserDataFromToken();
         if (!userDataFromToken.getRole().name().equals("admin")) {
@@ -127,6 +135,8 @@ public class ClinicServiceImpl implements ClinicService {
         }
     }
 
+
+    @Override
     public void addVetsToClinic(Long id, UpdateVetsDto request) {
         JwtUserPrincipal userDataFromToken = jwtService.getUserDataFromToken();
         if (!userDataFromToken.getRole().name().equals("admin")) {
@@ -159,6 +169,8 @@ public class ClinicServiceImpl implements ClinicService {
         userRepository.saveAll(vetsToAdd);
     }
 
+
+    @Override
     public void removeVetsFromClinic(Long id, UpdateVetsDto request) {
         JwtUserPrincipal userDataFromToken = jwtService.getUserDataFromToken();
         if (!userDataFromToken.getRole().name().equals("admin")) {
@@ -196,4 +208,8 @@ public class ClinicServiceImpl implements ClinicService {
 
     }
 
+    @Override
+    public void deleteClinic(Long clinic_id) {
+        clinicRepository.deleteById(clinic_id);
+    }
 }

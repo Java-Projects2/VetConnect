@@ -65,6 +65,9 @@ public class ClinicController {
         clinicService.removeVetsFromClinic(id, request);
         return ResponseEntity.ok("vet removed successfully");
     }
-
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteClinic(@PathVariable("id") Long id) {
+        clinicService.deleteClinic(id);
+        return ResponseEntity.ok("Clinic removed successfully");
+    }
 }

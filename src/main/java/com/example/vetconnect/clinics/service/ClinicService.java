@@ -19,6 +19,8 @@ public interface ClinicService {
 
     public void updateClinic(UpdateClinicDto request, Long id);
 
+    public void deleteClinic(Long id);
+
     public void addVetsToClinic(Long id , UpdateVetsDto  request);
 
     public void removeVetsFromClinic(Long id , UpdateVetsDto  request);
