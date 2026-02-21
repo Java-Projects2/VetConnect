@@ -33,16 +33,16 @@ public class UserServiceImplement implements UserService {
     public List<UserResponse> getAllUsers() {
         List<User> users = this.userRepository.findAll();
         return users.stream().map(user -> {
-            Clinic clinic = user.getClinic();
-            ClinicSummaryDTO clinicResponse = clinic == null ? null
-                    : new ClinicSummaryDTO(
-                    clinic.getId(),
-                    clinic.getName(),
-                    clinic.getAddress(),
-                    clinic.getPhone(),
-                    clinic.getCreatedAt(),
-                    clinic.getUpdatedAt()
-            );
+                    Clinic clinic = user.getClinic();
+                    ClinicSummaryDTO clinicResponse = clinic == null ? null
+                            : new ClinicSummaryDTO(
+                            clinic.getId(),
+                            clinic.getName(),
+                            clinic.getAddress(),
+                            clinic.getPhone(),
+                            clinic.getCreatedAt(),
+                            clinic.getUpdatedAt()
+                    );
                     return new UserResponse(
                             user.getId(),
                             user.getName(),
@@ -53,7 +53,33 @@ public class UserServiceImplement implements UserService {
                     );
                 })
                 .toList();
+    }
+
+    @Override
+    public UserResponse getUserData() {
+        Long userID = jwtService.getUserDataFromToken().getId();
+        User user = this.userRepository.findById(userID).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        ClinicSummaryDTO userClinic = null;
+        if (user.getClinic() != null) { // ✅ only map if clinic exists
+            userClinic = new ClinicSummaryDTO(
+                    user.getClinic().getId(),
+                    user.getClinic().getName(),
+                    user.getClinic().getAddress(),
+                    user.getClinic().getPhone(),
+                    user.getClinic().getCreatedAt(),
+                    user.getClinic().getUpdatedAt()
+            );
         }
+        return new UserResponse(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole(),
+                userClinic,
+                user.getCreatedAt()
+        );
+    }
 
     @Override
     public String createUser(CreateUserRequest request) {
