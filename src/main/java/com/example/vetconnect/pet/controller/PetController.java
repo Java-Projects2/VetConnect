@@ -29,6 +29,11 @@ public class PetController {
         List<PetResponse> petResponse = petService.getAllPets();
         return new ResponseEntity<>(petResponse, HttpStatus.OK);
     }
+    @GetMapping("/ofuser")
+    public ResponseEntity<List<PetResponse>> getAllPetsByUserId() {
+        List<PetResponse> petResponse = petService.getPetsByUserId();
+        return new ResponseEntity<>(petResponse, HttpStatus.OK);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePet(@PathVariable("id") Long id) {

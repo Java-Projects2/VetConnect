@@ -106,4 +106,13 @@ public class PetServiceImplement implements PetService {
         Pet pet = petRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pet does not exist"));
         return new PetResponse(pet);
     }
+
+    @Override
+    public List<PetResponse> getPetsByUserId() {
+        JwtUserPrincipal userDataFromToken = jwtService.getUserDataFromToken();
+        List<Pet> pets = petRepository.findByUserId(userDataFromToken.getId());
+        return pets.stream()
+                .map(PetResponse::new)
+                .collect(Collectors.toList());
+    }
 }
