@@ -2,6 +2,7 @@ package com.example.vetconnect.pet.entity;
 
 import com.example.vetconnect.appointment.entity.Appointment;
 import com.example.vetconnect.users.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -47,6 +48,7 @@ public class Pet {
     private User user;
 
     @OneToMany(mappedBy = "pet")
+    @JsonIgnore
     private Set<Appointment> appointments = new LinkedHashSet<>();
 
     public Pet(String name, String type, String breed, Integer age, User user) {

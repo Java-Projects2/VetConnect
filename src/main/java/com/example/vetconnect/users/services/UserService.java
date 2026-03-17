@@ -10,9 +10,7 @@ public interface UserService {
     List<UserResponse> getAllUsers();
     UserResponse getUserData();
     String createUser(CreateUserRequest request);
-
     UserResponse updateUser(Long id, UpdateUserRequest request);
-
     String deleteUser(Long id);
 
 }

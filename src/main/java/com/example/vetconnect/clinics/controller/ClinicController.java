@@ -28,7 +28,7 @@ public class ClinicController {
     @PostMapping
     public ResponseEntity<String> CreateClinic(@Valid @RequestBody CreateClinicDto request) {
         clinicService.createClinic(request);
-        return ResponseEntity.ok("clinic crreated successfully");
+        return ResponseEntity.ok("clinic created successfully");
     }
 
     @GetMapping

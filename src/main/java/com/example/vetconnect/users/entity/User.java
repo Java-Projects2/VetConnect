@@ -1,6 +1,7 @@
 package com.example.vetconnect.users.entity;
 
 import com.example.vetconnect.clinics.enitity.Clinic;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Getter;
@@ -41,6 +42,7 @@ public class User {
     private Role role = Role.user; // ✅ DEFAULT HERE
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "clinic_id", nullable = true)
     private Clinic clinic;
 
