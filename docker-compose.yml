@@ -28,7 +28,7 @@ services:
     container_name: vetconnect-app
     platform: linux/amd64
     ports:
-      - "8500:8500"
+      - "8080:8080"
     depends_on:
       db:
         condition: service_healthy
@@ -38,7 +38,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       JWT_SECRET: ${JWT_SECRET}
-      SERVER_PORT: 8500
+      SERVER_PORT: 8080
     restart: unless-stopped
 
 volumes:

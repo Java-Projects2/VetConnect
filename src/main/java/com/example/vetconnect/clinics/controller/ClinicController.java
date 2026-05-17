@@ -1,29 +1,24 @@
 package com.example.vetconnect.clinics.controller;
 
 import com.example.vetconnect.clinics.dto.*;
-import com.example.vetconnect.clinics.enitity.Clinic;
 import com.example.vetconnect.clinics.service.ClinicService;
-import com.example.vetconnect.users.Repository.UserRepository;
+/*import com.example.vetconnect.users.Repository.UserRepository;*/
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.querydsl.QPageRequest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping("/api/clinics")
 @AllArgsConstructor
 public class ClinicController {
     private final ClinicService clinicService;
-    private final UserRepository userRepository;
+    /*private final UserRepository userRepository;*/
 
     @PostMapping
     public ResponseEntity<String> CreateClinic(@Valid @RequestBody CreateClinicDto request) {
