@@ -14,7 +14,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "user", schema = "vetmvc")
+@Table(name = "user", schema = "vetconnect")
 @NoArgsConstructor
 public class User {
     @Id

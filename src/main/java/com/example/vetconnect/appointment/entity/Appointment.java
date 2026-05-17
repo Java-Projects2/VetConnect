@@ -17,7 +17,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "appointment", schema = "vetmvc")
+@Table(name = "appointment", schema = "vetconnect")
 @NoArgsConstructor
 public class Appointment {
     @Id

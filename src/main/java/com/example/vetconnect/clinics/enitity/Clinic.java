@@ -24,7 +24,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "clinic", schema = "vetmvc")
+@Table(name = "clinic", schema = "vetconnect")
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
 public class Clinic {

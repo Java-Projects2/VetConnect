@@ -1,0 +1,72 @@
+# =========================
+# 🔧 Build outputs
+# =========================
+target/
+build/
+out/
+*.class
+*.jar
+*.war
+*.ear
+
+# =========================
+# 📦 Dependency caches
+# =========================
+node_modules/
+.npm/
+.m2/
+.gradle/
+
+# =========================
+# 🧪 Logs & runtime files
+# =========================
+*.log
+logs/
+tmp/
+temp/
+
+# =========================
+# 🧬 OS / IDE files
+# =========================
+.DS_Store
+Thumbs.db
+
+# IntelliJ
+.idea/
+*.iml
+
+# Eclipse
+.project
+.classpath
+.settings/
+
+# VS Code
+.vscode/
+
+# =========================
+# 🔐 Environment & secrets
+# =========================
+.env
+.env.*
+application-local.properties
+application-secret.properties
+application-prod.properties
+
+# =========================
+# 🐳 Docker (optional overrides)
+# =========================
+docker-compose.override.yml
+*.env
+
+# =========================
+# 🗄️ Database / dumps
+# =========================
+*.sql
+*.dump
+*.bak
+
+# =========================
+# 📂 Uploads / generated files
+# =========================
+uploads/
+generated/

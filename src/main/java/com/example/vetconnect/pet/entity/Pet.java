@@ -16,7 +16,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
-@Table(name = "pet", schema = "vetmvc")
+@Table(name = "pet", schema = "vetconnect")
 @NoArgsConstructor
 public class Pet {
     @Id
